@@ -7,7 +7,9 @@ const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
 const CHANNEL_ID = process.env.CHANNEL_ID;
 
 const app = express();
-app.use(express.json());
+
+// Middleware to parse plain text request bodies
+app.use(express.text());
 
 let channel = null;
 
@@ -69,9 +71,6 @@ function formatData(data) {
 
     if (typeof data === 'string') {
         message = data;
-    } else if (typeof data === 'object' && data !== null) {
-        // Try to extract 'message' field
-        message = data.message || JSON.stringify(data);
     } else {
         message = String(data);
     }
