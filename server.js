@@ -41,6 +41,7 @@ client.login(DISCORD_BOT_TOKEN);
 
 app.post('/webhooks/alert', async (req, res) => {
     console.log('Alert route hit');
+    console.log('Request headers:', req.headers);
     console.log('Request body:', req.body);
 
     if (!discordReady) {
@@ -55,10 +56,23 @@ app.post('/webhooks/alert', async (req, res) => {
 
     // Process the data
     const data = req.body;
-    const message = formatData(data);
+    const { message, ticker } = formatData(data);
 
     try {
-        await channel.send(message);
+        let chartUrl = null;
+
+        if (ticker) {
+            chartUrl = getStockChartUrl(ticker);
+        }
+
+        // Create Discord message options
+        const messageOptions = { content: message };
+
+        if (chartUrl) {
+            messageOptions.files = [{ attachment: chartUrl, name: `${ticker}_chart.png` }];
+        }
+
+        await channel.send(messageOptions);
         res.status(200).send('Message sent to Discord');
     } catch (err) {
         console.error('Error sending message to Discord:', err);
@@ -68,26 +82,37 @@ app.post('/webhooks/alert', async (req, res) => {
 
 function formatData(data) {
     let message = '';
+    let ticker = '';
 
     if (typeof data === 'string') {
         message = data;
+        // Attempt to extract ticker from the message using regex
+        const tickerMatch = data.match(/\b[A-Z]{1,5}\b/g);
+        if (tickerMatch) {
+            // Assuming the last matched uppercase word is the ticker
+            ticker = tickerMatch[tickerMatch.length - 1];
+        }
+    } else if (typeof data === 'object' && data !== null) {
+        // Try to extract 'message' and 'ticker' fields
+        message = data.message || JSON.stringify(data);
+        ticker = data.ticker || '';
     } else {
         message = String(data);
     }
 
-    // Remove any single quotes
-    message = message.replace(/'/g, '');
+    message = `${message} @everyone`;
 
-    // Optionally, split at the first single quote and take the first part
-    const splitSections = message.split('\'');
-    if (splitSections.length > 0) {
-        message = splitSections[0];
+    return { message, ticker };
+}
+
+function getStockChartUrl(ticker) {
+    if (!ticker) {
+        return null;
     }
 
-    message = message.replace(/'/g, '');
-
-    message = `${message} @everyone`;
-    return message;
+    // Construct the Finviz chart URL
+    const chartUrl = `https://finviz.com/chart.ashx?t=${ticker}&p=h1&ty=c&ta=1&s=l`;
+    return chartUrl;
 }
 
 const PORT = process.env.PORT || 8181;
