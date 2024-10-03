@@ -90,7 +90,7 @@ function formatData(data) {
         const tickerMatch = data.match(/\b[A-Z]{1,5}\b/g);
         if (tickerMatch) {
             // Assuming the last matched uppercase word is the ticker
-            ticker = tickerMatch[tickerMatch.length - 1];
+            ticker = tickerMatch[0];
         }
     } else if (typeof data === 'object' && data !== null) {
         // Try to extract 'message' and 'ticker' fields
