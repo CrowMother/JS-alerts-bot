@@ -1,0 +1,2 @@
+docker build --no-cache -t crowmommy/js-alerts-bot . 
+docker push crowmommy/js-alerts-bot

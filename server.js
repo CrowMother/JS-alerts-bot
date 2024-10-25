@@ -100,7 +100,7 @@ function formatData(data) {
         message = String(data);
     }
 
-    message = `${message} @everyone`;
+    message = `${message} @here`;
 
     return { message, ticker };
 }
