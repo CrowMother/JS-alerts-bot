@@ -44,18 +44,25 @@ app.post('/webhooks/alert', async (req, res) => {
     console.log('Request headers:', req.headers);
     console.log('Request body:', req.body);
 
+    // Respond immediately
+    res.status(200).send('Webhook received');
+
+    // Process data asynchronously after response
+    processWebhookData(req.body);
+});
+
+async function processWebhookData(data) {
     if (!discordReady) {
         console.log('Discord client is not ready yet.');
-        return res.status(503).send('Discord client not ready');
+        return;
     }
 
     if (!channel) {
         console.error('Channel not found');
-        return res.status(404).send('Channel not found');
+        return;
     }
 
     // Process the data
-    const data = req.body;
     const { message, ticker } = formatData(data);
 
     try {
@@ -71,14 +78,13 @@ app.post('/webhooks/alert', async (req, res) => {
         if (chartUrl) {
             messageOptions.files = [{ attachment: chartUrl, name: `${ticker}_chart.png` }];
         }
-
+        //--------uncomment to send message to discord--------
         await channel.send(messageOptions);
-        res.status(200).send('Message sent to Discord');
+        console.log('Message sent to Discord');
     } catch (err) {
         console.error('Error sending message to Discord:', err);
-        res.status(500).send('Error sending message to Discord');
     }
-});
+}
 
 function formatData(data) {
     let message = '';
