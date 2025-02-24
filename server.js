@@ -106,7 +106,7 @@ function formatData(data) {
         message = String(data);
     }
 
-    message = `${message} @here`;
+    message = `${message} @ here`;
 
     return { message, ticker };
 }
