@@ -47,14 +47,25 @@ app.post('/TV/channel/:channelID/APIkey/:apiKey', async (req, res) => {
     console.log('Request headers:', req.headers);
     console.log('Request body:', req.body);
 
+    // Validate API key
+    // for now, api key is constant
+    if (apiKey !== process.env.API_KEY) {
+        console.log('Invalid API key');
+        res.status(401).send('Unauthorized');
+        return;
+    }
+
     // Respond immediately
     res.status(200).send('Webhook received');
 
     // Process data asynchronously after response
-    processWebhookData(req.body);
+    processWebhookData(req.body, channelID);
 });
 
-async function processWebhookData(data) {
+async function processWebhookData(data, channelID) {
+
+    channel = await client.channels.fetch(channelID);
+
     if (!discordReady) {
         console.log('Discord client is not ready yet.');
         return;
