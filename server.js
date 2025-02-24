@@ -39,7 +39,10 @@ client.once('ready', async () => {
 
 client.login(DISCORD_BOT_TOKEN);
 
-app.post('/webhooks/alert', async (req, res) => {
+app.post('/TV/channel/:channelID/APIkey/:apiKey', async (req, res) => {
+    const channelID = req.params.channelID;
+    const apiKey = req.params.apiKey;
+    console.log(`Received data for channel ${channelID} with API key ${apiKey}`);
     console.log('Alert route hit');
     console.log('Request headers:', req.headers);
     console.log('Request body:', req.body);
@@ -121,7 +124,7 @@ function getStockChartUrl(ticker) {
     return chartUrl;
 }
 
-const PORT = process.env.PORT || 8181;
+const PORT = process.env.PORT || 80;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
