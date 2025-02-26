@@ -27,7 +27,7 @@ client.once('ready', () => {
 
 client.login(DISCORD_BOT_TOKEN);
 
-app.post('/TV/channel/:channelID/APIkey/:apiKey', async (req, res) => {
+app.post('/webhooks/TV/channel/:channelID/APIkey/:apiKey', async (req, res) => {
     const channelID = req.params.channelID;
     const apiKey = req.params.apiKey;
     console.log(`Received data for channel ${channelID} with API key ${apiKey}`);
