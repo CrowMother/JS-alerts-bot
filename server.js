@@ -27,7 +27,7 @@ client.once('ready', () => {
 
 client.login(DISCORD_BOT_TOKEN);
 
-app.post('/TV/channel/:channelID/APIkey/:apiKey', async (req, res) => {
+app.post('/webhooks/TV/channel/:channelID/APIkey/:apiKey', async (req, res) => {
     const channelID = req.params.channelID;
     const apiKey = req.params.apiKey;
     console.log(`Received data for channel ${channelID} with API key ${apiKey}`);
@@ -108,7 +108,7 @@ function formatData(data) {
         message = String(data);
     }
 
-    message = `${message} @ here`;
+    message = `${message} @here`;
 
     return { message, ticker };
 }
@@ -123,7 +123,7 @@ function getStockChartUrl(ticker) {
     return chartUrl;
 }
 
-const PORT = process.env.PORT || 80;
+const PORT = process.env.PORT || 8181;
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on port: ${PORT}`);
 });
