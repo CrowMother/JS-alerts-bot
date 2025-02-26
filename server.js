@@ -19,23 +19,11 @@ const client = new Client({
 
 let discordReady = false;
 
-client.once('ready', async () => {
+client.once('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
     discordReady = true;
-
-    try {
-        channel = await client.channels.fetch(CHANNEL_ID);
-        if (channel && channel.isTextBased()) {
-            console.log(`Channel found: ${channel.name} (${channel.id})`);
-        } else {
-            console.error('Channel is not a text channel or not found');
-            process.exit(1);
-        }
-    } catch (error) {
-        console.error('Error fetching the channel:', error);
-        process.exit(1);
-    }
 });
+
 
 client.login(DISCORD_BOT_TOKEN);
 
