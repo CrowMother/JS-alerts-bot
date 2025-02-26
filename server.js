@@ -108,7 +108,7 @@ function formatData(data) {
         message = String(data);
     }
 
-    message = `${message} @ here`;
+    message = `${message} @here`;
 
     return { message, ticker };
 }
@@ -123,7 +123,7 @@ function getStockChartUrl(ticker) {
     return chartUrl;
 }
 
-const PORT = process.env.PORT || 80;
+const PORT = process.env.PORT || 8181;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
