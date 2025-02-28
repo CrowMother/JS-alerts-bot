@@ -52,7 +52,7 @@ app.post('/webhooks/TV/channel/:channelID/APIkey/:apiKey/:suffix?', async (req, 
     console.log('Processing suffix:', suffix);
     if (suffix) {
         console.log(`Extra parameter received: ${suffix}`);
-        processWebhookData(suffix, channelID, suffix);
+        processWebhookData(req.body, channelID, suffix);
     }
     else{
         processWebhookData(req.body, channelID, DEFAULT_SUFFIX);
@@ -116,6 +116,8 @@ function formatData(data, suffix) {
     } else {
         message = String(data);
     }
+    //replace _ with spaces in suffix
+    suffix = suffix.replace(/_/g, ' ');
 
     message = `${message} ${suffix}`;
 
