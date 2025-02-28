@@ -28,7 +28,7 @@ client.once('ready', () => {
 
 client.login(DISCORD_BOT_TOKEN);
 
-app.post('/webhooks/TV/channel/:channelID/APIkey/:apiKey/:format', async (req, res) => {
+app.post('/webhooks/TV/channel/:channelID/APIkey/:apiKey/:format?', async (req, res) => {
     const channelID = req.params.channelID;
     const apiKey = req.params.apiKey;
     const format = req.params.format;
@@ -50,7 +50,7 @@ app.post('/webhooks/TV/channel/:channelID/APIkey/:apiKey/:format', async (req, r
 
     // Process data asynchronously after response
     if (format) {
-        console.log(`Extra parameter received: ${extraParam}`);
+        console.log(`Extra parameter received: ${format}`);
         processWebhookData(extraParam, channelID, format);
     }
     processWebhookData(req.body, channelID, DEFAULT_FORMAT);
