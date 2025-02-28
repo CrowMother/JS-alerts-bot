@@ -49,6 +49,7 @@ app.post('/webhooks/TV/channel/:channelID/APIkey/:apiKey/:suffix?', async (req, 
     res.status(200).send('Webhook received');
 
     // Process data asynchronously after response
+    console.log('Processing suffix:', suffix);
     if (suffix) {
         console.log(`Extra parameter received: ${suffix}`);
         processWebhookData(suffix, channelID, format);
