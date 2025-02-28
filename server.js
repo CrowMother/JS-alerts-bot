@@ -52,7 +52,7 @@ app.post('/webhooks/TV/channel/:channelID/APIkey/:apiKey/:suffix?', async (req, 
     console.log('Processing suffix:', suffix);
     if (suffix !== "undefined") {
         console.log(`Extra parameter received: ${suffix}`);
-        processWebhookData(suffix, channelID, format);
+        processWebhookData(suffix, channelID, suffix);
     }
     processWebhookData(req.body, channelID, suffix);
 });
