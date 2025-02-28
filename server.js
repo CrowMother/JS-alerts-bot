@@ -28,10 +28,10 @@ client.once('ready', () => {
 
 client.login(DISCORD_BOT_TOKEN);
 
-app.post('/webhooks/TV/channel/:channelID/APIkey/:apiKey/:format?', async (req, res) => {
+app.post('/webhooks/TV/channel/:channelID/APIkey/:apiKey/:suffix?', async (req, res) => {
     const channelID = req.params.channelID;
     const apiKey = req.params.apiKey;
-    const format = req.params.format;
+    const suffix = req.params.suffix;
     console.log(`Received data for channel ${channelID} with API key ${apiKey}`);
     console.log('Alert route hit');
     console.log('Request headers:', req.headers);
@@ -49,14 +49,14 @@ app.post('/webhooks/TV/channel/:channelID/APIkey/:apiKey/:format?', async (req, 
     res.status(200).send('Webhook received');
 
     // Process data asynchronously after response
-    if (format) {
-        console.log(`Extra parameter received: ${format}`);
-        processWebhookData(extraParam, channelID, format);
+    if (suffix) {
+        console.log(`Extra parameter received: ${suffix}`);
+        processWebhookData(suffix, channelID, format);
     }
-    processWebhookData(req.body, channelID, DEFAULT_FORMAT);
+    processWebhookData(req.body, channelID, suffix);
 });
 
-async function processWebhookData(data, channelID, format) {
+async function processWebhookData(data, channelID, suffix) {
 
     channel = await client.channels.fetch(channelID);
 
@@ -71,7 +71,7 @@ async function processWebhookData(data, channelID, format) {
     }
 
     // Process the data
-    const { message, ticker } = formatData(data, format);
+    const { message, ticker } = formatData(data, suffix);
 
     try {
         let chartUrl = null;
@@ -94,7 +94,7 @@ async function processWebhookData(data, channelID, format) {
     }
 }
 
-function formatData(data, format) {
+function formatData(data, suffix) {
     let message = '';
     let ticker = '';
 
@@ -114,7 +114,7 @@ function formatData(data, format) {
         message = String(data);
     }
 
-    message = format;
+    message = `${message} ${suffix}`;
 
     return { message, ticker };
 }
