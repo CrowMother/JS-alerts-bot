@@ -5,6 +5,7 @@ const { Client, GatewayIntentBits } = require('discord.js');
 
 const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
 const CHANNEL_ID = process.env.CHANNEL_ID;
+const DEFAULT_FORMAT = process.env.FORMAT;
 
 const app = express();
 
@@ -27,9 +28,10 @@ client.once('ready', () => {
 
 client.login(DISCORD_BOT_TOKEN);
 
-app.post('/webhooks/TV/channel/:channelID/APIkey/:apiKey', async (req, res) => {
+app.post('/webhooks/TV/channel/:channelID/APIkey/:apiKey/:format', async (req, res) => {
     const channelID = req.params.channelID;
     const apiKey = req.params.apiKey;
+    const format = req.params.format;
     console.log(`Received data for channel ${channelID} with API key ${apiKey}`);
     console.log('Alert route hit');
     console.log('Request headers:', req.headers);
@@ -47,10 +49,14 @@ app.post('/webhooks/TV/channel/:channelID/APIkey/:apiKey', async (req, res) => {
     res.status(200).send('Webhook received');
 
     // Process data asynchronously after response
-    processWebhookData(req.body, channelID);
+    if (format) {
+        console.log(`Extra parameter received: ${extraParam}`);
+        processWebhookData(extraParam, channelID, format);
+    }
+    processWebhookData(req.body, channelID, DEFAULT_FORMAT);
 });
 
-async function processWebhookData(data, channelID) {
+async function processWebhookData(data, channelID, format) {
 
     channel = await client.channels.fetch(channelID);
 
@@ -65,7 +71,7 @@ async function processWebhookData(data, channelID) {
     }
 
     // Process the data
-    const { message, ticker } = formatData(data);
+    const { message, ticker } = formatData(data, format);
 
     try {
         let chartUrl = null;
@@ -88,7 +94,7 @@ async function processWebhookData(data, channelID) {
     }
 }
 
-function formatData(data) {
+function formatData(data, format) {
     let message = '';
     let ticker = '';
 
@@ -108,7 +114,7 @@ function formatData(data) {
         message = String(data);
     }
 
-    message = `${message} @here`;
+    message = format;
 
     return { message, ticker };
 }
