@@ -5,7 +5,7 @@ const { Client, GatewayIntentBits } = require('discord.js');
 
 const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
 const CHANNEL_ID = process.env.CHANNEL_ID;
-const DEFAULT_FORMAT = process.env.FORMAT;
+const DEFAULT_SUFFIX = process.env.DEFAULT_SUFFIX;
 
 const app = express();
 
@@ -49,11 +49,14 @@ app.post('/webhooks/TV/channel/:channelID/APIkey/:apiKey/:suffix?', async (req, 
     res.status(200).send('Webhook received');
 
     // Process data asynchronously after response
+    console.log('Processing suffix:', suffix);
     if (suffix) {
         console.log(`Extra parameter received: ${suffix}`);
-        processWebhookData(suffix, channelID, format);
+        processWebhookData(req.body, channelID, suffix);
     }
-    processWebhookData(req.body, channelID, suffix);
+    else{
+        processWebhookData(req.body, channelID, DEFAULT_SUFFIX);
+    }
 });
 
 async function processWebhookData(data, channelID, suffix) {
@@ -113,6 +116,8 @@ function formatData(data, suffix) {
     } else {
         message = String(data);
     }
+    //replace _ with spaces in suffix
+    suffix = suffix.replace(/_/g, ' ');
 
     message = `${message} ${suffix}`;
 
